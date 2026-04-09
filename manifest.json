@@ -2,6 +2,13 @@
 "manifest_version": 3,
 "name": "Extention for Moodle+R",
 "version": "1.0",
+"permissions": [
+"storage",
+"tabs"
+],
+"action": {
+"default_popup": "popup.html"
+},
 "content_scripts": [
 {
 "matches": ["https://lms.ritsumei.ac.jp/my/*"],
