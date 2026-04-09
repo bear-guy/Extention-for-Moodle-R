@@ -1,0 +1,64 @@
+/* 1. ページ全体の横幅制限を完全に解除 */
+body.limitedwidth #page.container-fluid,
+body.limitedwidth #page,
+.container,
+.container-fluid,
+#region-main-box,
+#region-main {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+/* 2. 横並びコンテナ設定 */
+.custom-layout-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+    width: 100% !important;
+    margin: 10px 0 !important;
+}
+
+/* 3. タイムライン(左) と 時間割(右) の比率 */
+.custom-layout-wrapper > .block_timeline {
+    flex: 1 !important;
+    min-width: 350px !important;
+}
+
+.custom-layout-wrapper > .block_rutime_table {
+    flex: 2 !important;
+    min-width: 0 !important;
+}
+
+/* 4. 【重要】時間割の縦スクロールを完全に消す */
+.block_rutime_table .card-body,
+.timetable-table {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important; /* スクロールバーを消す */
+}
+
+/* 5. テーブルを横いっぱいに広げ、各列の幅を均等にする */
+.timetable-table table {
+    width: 100% !important;
+    table-layout: fixed !important; 
+    border-collapse: collapse !important;
+}
+
+.timetable-table td {
+    font-size: 0.85rem !important;
+    padding: 6px 4px !important;
+    vertical-align: top !important;
+    word-break: break-all !important; /* 文字がはみ出さないように */
+}
+
+/* 画面が狭いときは縦並びに戻す */
+@media (max-width: 1100px) {
+    .custom-layout-wrapper {
+        flex-direction: column !important;
+    }
+}

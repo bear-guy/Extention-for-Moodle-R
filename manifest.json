@@ -1,0 +1,12 @@
+{
+"manifest_version": 3,
+"name": "Extention for Moodle+R",
+"version": "1.0",
+"content_scripts": [
+{
+"matches": ["https://lms.ritsumei.ac.jp/my/*"],
+"css": ["content.css"],
+"js": ["content.js"]
+}
+]
+}
