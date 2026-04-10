@@ -56,6 +56,12 @@ body.moodle-ext-enabled .timetable-table td.time {
     text-align: center !important;
 }
 
+/* 時間割の曜日（月火水木金）と時限（1〜7）の文字色を青色にする */
+body.moodle-ext-enabled .timetable-table th,
+body.moodle-ext-enabled .timetable-table td.time {
+    color: #0d6efd !important;
+}
+
 body.moodle-ext-enabled .timetable-table td {
     font-size: 0.85rem !important;
     padding: 6px 4px !important;
@@ -114,15 +120,13 @@ body.dark-mode .activity-header {
 }
 
 /* ダークモード時のバッジを明るく見やすい赤色に上書き */
-body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark,
-body.moodle-ext-enabled.dark-mode .activity-information .badge {
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark {
     background-color: #ff5252 !important; /* ダークモードに映える明るい赤 */
     color: #ffffff !important;
     position: relative !important;
     z-index: 10 !important; /* 他の背景の後ろに隠れないように前面に出す */
 }
-body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark *,
-body.moodle-ext-enabled.dark-mode .activity-information .badge * {
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark * {
     color: #ffffff !important; /* バッジの中の文字も強制的に白にする */
 }
 
@@ -203,6 +207,22 @@ body.dark-mode .calendarmonth td.weekend {
     background-color: #2a2a2a !important;
 }
 
+/* 通知詳細のインラインスタイルテーブルのダークモード対応 */
+body.dark-mode .notification-area table,
+body.dark-mode .notification-area table td,
+body.dark-mode .notification-area table th {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+body.dark-mode .notification-area table h3 {
+    color: #e0e0e0 !important; /* 黒文字を白文字に上書き */
+}
+body.dark-mode .notification-area table h4 {
+    background-color: #331111 !important; /* 薄い赤背景を暗い赤背景に上書き */
+    color: #ff5252 !important; /* 赤文字を明るい赤色に上書き */
+}
+
 /* Moodle+R特有の時間割表の背景 */
 /* 時間割の縦線・横線を白線で引き直す */
 body.dark-mode .timetable th,
@@ -218,6 +238,12 @@ body.dark-mode .timetable td.time {
 
 body.dark-mode .timetable td.highlight {
     background-color: #2a2a2a !important;
+}
+
+/* ダークモード時の曜日と時限を明るい青色にする */
+body.dark-mode .timetable th,
+body.dark-mode .timetable td.time {
+    color: #82b1ff !important;
 }
 
 /* 時間割内の教室表示 */
@@ -244,4 +270,41 @@ body.dark-mode .legend-container {
 body.dark-mode .btn-outline-secondary {
     color: #e0e0e0 !important;
     border-color: #555 !important;
+}
+
+/* セカンダリボタンのダークモード対応 */
+body.dark-mode .btn-secondary {
+    background-color: #333 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .btn-secondary:hover,
+body.dark-mode .btn-secondary:focus {
+    background-color: #444 !important;
+    color: #fff !important;
+}
+/* ダークモード時のバッジを明るく見やすい赤色に上書き */
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark {
+    /* 1. 背景色をより鮮やかな赤（またはネオン系の赤）に変更 */
+    background-color: #ff3b30 !important; 
+    
+    /* 2. 背景の透過を完全にオフにする（これが最も重要かもしれません） */
+    opacity: 1 !important;
+    
+    /* 3. 背景との境界をはっきりさせるために、細い枠線を追加 */
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+
+    /* 4. 文字をはっきり白にする */
+    color: #ffffff !important;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.5) !important;
+
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* もし「完了」などの緑系のバッジも暗い場合は、以下も検討してください */
+body.moodle-ext-enabled.dark-mode .badge.bg-success {
+    background-color: #34c759 !important;
+    opacity: 1 !important;
 }
