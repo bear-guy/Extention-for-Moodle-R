@@ -81,24 +81,26 @@ const initExtension = (isStaffMode) => {
     }
   };
 
+  // リンク定義
+  const studentLinks = [
+    { name: 'Student Portal', url: 'https://sp.ritsumei.ac.jp/studentportal' },
+    { name: 'Campus Web', url: 'https://cw.ritsumei.ac.jp/campusweb/login.html' }
+  ];
+
+  const staffLinks = [
+    { name: '教職員ポータル', url: 'https://ritsumei365.sharepoint.com/sites/portal/' },
+    { name: '教務支援', url: 'https://www.ritsumei.ac.jp/staff-all/academic-affairs/' },
+    { name: '教員ポータル', url: 'https://www.ritsumei.ac.jp/faculty-portal/' },
+    { name: 'Respon', url: 'https://ritsumei.respon.jp/t/' },
+    { name: '休補講・教室変更', url: 'https://www.ritsumei.ac.jp/pathways-future/course/cancel.html/' },
+    { name: '打刻', url: 'https://ritsumei-cws.company.works-hi.com/self-workflow/cws/srwtimerec' },
+    { name: 'manaba+R', url: 'https://ct.ritsumei.ac.jp/ct/' }
+  ];
+
+  const currentLinks = isStaffMode ? staffLinks : studentLinks;
+
   // カスタムリンクの追加
   const addCustomLinks = () => {
-    const studentLinks = [
-      { name: 'Student Portal', url: 'https://sp.ritsumei.ac.jp/studentportal' },
-      { name: 'Campus Web', url: 'https://cw.ritsumei.ac.jp/campusweb/login.html' }
-    ];
-
-    const staffLinks = [
-      { name: '教職員ポータル', url: 'https://ritsumei365.sharepoint.com/sites/portal/' },
-      { name: '教務支援', url: 'https://www.ritsumei.ac.jp/staff-all/academic-affairs/' },
-      { name: '教員ポータル', url: 'https://www.ritsumei.ac.jp/faculty-portal/' },
-      { name: 'Respon', url: 'https://ritsumei.respon.jp/t/' },
-      { name: '打刻', url: 'https://ritsumei-cws.company.works-hi.com/self-workflow/cws/srwtimerec' },
-      { name: 'manaba+R', url: 'https://ct.ritsumei.ac.jp/ct/' }
-    ];
-
-    const links = isStaffMode ? staffLinks : studentLinks;
-
     // ヘッダーのナビゲーションメニューに追加（「Intelliboard」の後ろ）
     const navbar = document.querySelector('ul.navbar-nav.more-nav');
     if (navbar && !document.querySelector('.custom-nav-link')) {
@@ -106,7 +108,7 @@ const initExtension = (isStaffMode) => {
       const targetItem = navItems.find(li => li.textContent.includes('Intelliboard')) || navItems[navItems.length - 1];
 
       if (targetItem) {
-        links.slice().reverse().forEach(link => {
+        currentLinks.slice().reverse().forEach(link => {
           const li = document.createElement('li');
           li.className = 'nav-item custom-nav-link';
           li.setAttribute('role', 'none');
@@ -129,7 +131,7 @@ const initExtension = (isStaffMode) => {
       }
 
       if (targetLink) {
-        links.slice().reverse().forEach(link => {
+        currentLinks.slice().reverse().forEach(link => {
           const a = document.createElement('a');
           a.className = 'list-group-item list-group-item-action custom-drawer-link';
           a.href = link.url;
@@ -141,12 +143,59 @@ const initExtension = (isStaffMode) => {
     }
   };
 
+  // 既存のリンク集などから重複するリンクを非表示にする
+  const hideDuplicateLinks = () => {
+    let duplicateKeywords = [];
+    let duplicateUrls = [];
+
+    if (isStaffMode) {
+      // 教職員モードで非表示にする重複リンク
+      duplicateKeywords = ['休補講・教室変更', '教職員ポータル', '教務支援', '教員ポータル', 'Respon', '打刻', 'manaba+R'];
+      duplicateUrls = ['course/cancel.html', 'kyu-hoko', 'sharepoint.com/sites/portal', 'academic-affairs', 'faculty-portal', 'ritsumei.respon.jp', 'ritsumei-cws', 'ct.ritsumei.ac.jp/ct/'];
+    } else {
+      // 学生モードで非表示にする重複リンク
+      duplicateKeywords = ['Student Portal', 'STUDENT PORTAL', 'Campus Web'];
+      duplicateUrls = ['sp.ritsumei.ac.jp/studentportal', 'www.ritsumei.ac.jp/rsp', 'cw.ritsumei.ac.jp/campusweb'];
+    }
+
+    document.querySelectorAll('a').forEach(a => {
+      // 拡張機能自身が追加したリンクは除外
+      if (a.closest('.custom-nav-link') || a.classList.contains('custom-drawer-link')) return;
+
+      const href = a.href || '';
+      const text = a.textContent.trim();
+      
+      const isMatch = duplicateUrls.some(url => href.includes(url)) || 
+                      duplicateKeywords.some(kw => text.includes(kw));
+
+      if (isMatch) {
+        const li = a.closest('li');
+        // ドロップダウンメニューの親要素（リンク集など）を誤って消さないようにする
+        if (li && !li.classList.contains('dropdown') && !li.classList.contains('nav-item')) {
+          li.style.display = 'none';
+        } else {
+          a.style.display = 'none';
+          // brタグ等で区切られている場合の改行を消す
+          let next = a.nextSibling;
+          while (next && next.nodeType === Node.TEXT_NODE && next.textContent.trim() === '') {
+            next = next.nextSibling;
+          }
+          if (next && next.nodeName === 'BR') {
+            next.style.display = 'none';
+          }
+        }
+      }
+    });
+  };
+
   // 監視設定（Moodleは後から要素が増えるので多めに監視）
   const observer = new MutationObserver(() => {
     fixMoodleLayout();
     addCustomLinks();
+    hideDuplicateLinks();
   });
   observer.observe(document.body, { childList: true, subtree: true });
   fixMoodleLayout();
   addCustomLinks();
+  hideDuplicateLinks();
 };

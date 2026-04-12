@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const darkToggle = document.getElementById('darkModeToggle');
   const skipHomeToggle = document.getElementById('skipHomeToggle');
   const staffModeToggle = document.getElementById('staffModeToggle');
+  const staffModeWrapper = document.getElementById('staffModeWrapper');
 
   // 保存されている状態を取得
   chrome.storage.local.get({ isEnabled: true, isDarkMode: false, isSkipHomeEnabled: false, isStaffMode: false }, (data) => {
@@ -10,7 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     darkToggle.checked = data.isDarkMode;
     skipHomeToggle.checked = data.isSkipHomeEnabled;
     staffModeToggle.checked = data.isStaffMode;
+
+    // 初期状態の教職員モードの表示を更新
+    updateStaffModeUI(data.isEnabled);
   });
+
+  // 教職員モードのUI状態を更新する関数
+  const updateStaffModeUI = (isEnabled) => {
+    staffModeToggle.disabled = !isEnabled;
+    staffModeWrapper.style.opacity = isEnabled ? '1' : '0.4';
+  };
 
   // Moodle のタブをリロードして変更を反映する共通関数
   const reloadTabs = () => {
@@ -21,7 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // トグル切り替え時の処理 (レイアウト変更)
   toggle.addEventListener('change', () => {
-    chrome.storage.local.set({ isEnabled: toggle.checked }, reloadTabs);
+    const isEnabled = toggle.checked;
+    updateStaffModeUI(isEnabled);
+
+    const updates = { isEnabled: isEnabled };
+    // ベターレイアウトがオフになったら、教職員モードも連動してオフにする
+    if (!isEnabled && staffModeToggle.checked) {
+      staffModeToggle.checked = false;
+      updates.isStaffMode = false;
+    }
+    
+    chrome.storage.local.set(updates, reloadTabs);
   });
 
   // トグル切り替え時の処理 (ダークモード)

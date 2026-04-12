@@ -37,6 +37,22 @@
     }
     input:checked + .slider { background-color: #2196F3; }
     input:checked + .slider:before { transform: translateX(20px); }
+    
+    .links-wrapper {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .bottom-link { color: #666; text-decoration: none; }
+    .bottom-link:hover { text-decoration: underline; color: #333; }
+    .divider { color: #ccc; margin: 0 8px; }
+    
+    .credit-text {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 10px;
+      color: #999;
+    }
   </style>
 </head>
 <body>
@@ -45,6 +61,13 @@
     <span class="toggle-label">ベターレイアウト</span>
     <label class="switch">
       <input type="checkbox" id="extensionToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="toggle-wrapper" style="margin-top: 10px;" id="staffModeWrapper">
+    <span class="toggle-label">教職員モード</span>
+    <label class="switch">
+      <input type="checkbox" id="staffModeToggle">
       <span class="slider"></span>
     </label>
   </div>
@@ -62,12 +85,14 @@
       <span class="slider"></span>
     </label>
   </div>
-  <div class="toggle-wrapper" style="margin-top: 10px;">
-    <span class="toggle-label">教職員モード</span>
-    <label class="switch">
-      <input type="checkbox" id="staffModeToggle">
-      <span class="slider"></span>
-    </label>
+  
+  <div class="links-wrapper">
+    <a href="https://github.com/bear-guy/Extension-for-Moodle-R" target="_blank" class="bottom-link">GitHub</a>
+    <span class="divider">|</span>
+    <a href="#" target="_blank" class="bottom-link">Buy Me a Coffee</a>
+  </div>
+  <div class="credit-text">
+    &copy; 2026 <a href="https://x.com/somakumagai" target="_blank" class="bottom-link">Soma Kumagai</a> All rights reserved.
   </div>
   <script src="popup.js"></script>
 </body>
