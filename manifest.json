@@ -1,6 +1,6 @@
 {
 "manifest_version": 3,
-"name": "Extention for Moodle+R",
+"name": "Extension for Moodle+R",
 "version": "1.0",
 "permissions": [
 "storage",

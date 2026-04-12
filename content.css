@@ -124,15 +124,29 @@ body.dark-mode .activity-header {
     border-color: #333 !important;
 }
 
-/* ダークモード時のバッジを明るく見やすい赤色に上書き */
-body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark {
-    background-color: #ff5252 !important; /* ダークモードに映える明るい赤 */
-    color: #ffffff !important;
+/* ダークモード時の完了条件バッジや通知バッジ */
+/* 未完了・やるべきこと（赤色） */
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark,
+body.moodle-ext-enabled.dark-mode .badge.alert-danger {
+    background-color: #4a151b !important; /* 落ち着いた暗めの赤背景 */
+    border: 1px solid #8b2832 !important;
+    color: #ffb3b3 !important; /* 見やすいピンク・赤系の文字 */
     position: relative !important;
-    z-index: 10 !important; /* 他の背景の後ろに隠れないように前面に出す */
+    z-index: 10 !important;
 }
-body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark * {
-    color: #ffffff !important; /* バッジの中の文字も強制的に白にする */
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.bg-light.text-dark *,
+body.moodle-ext-enabled.dark-mode .badge.alert-danger * {
+    color: #ffb3b3 !important;
+}
+
+/* 完了（緑色） */
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.alert-success {
+    background-color: #123c24 !important; /* 落ち着いた暗めの緑背景 */
+    border: 1px solid #236c42 !important;
+    color: #a8e4b6 !important; /* 見やすい緑系の文字 */
+}
+body.moodle-ext-enabled.dark-mode .badge.rounded-pill.alert-success * {
+    color: #a8e4b6 !important;
 }
 
 /* 未読の通知を少し明るめのダークグレーにして区別する */
@@ -180,6 +194,37 @@ body.dark-mode .border-start,
 body.dark-mode .border-end,
 body.dark-mode .border {
     border-color: #333 !important;
+}
+
+/* 本文領域で文字が背景と同化するのを防ぐ */
+body.dark-mode .activity-description,
+body.dark-mode .no-overflow,
+body.dark-mode .text_to_html {
+    color: #e0e0e0 !important;
+}
+
+/* preタグ等はブラウザデフォルトで黒になることがあるため強制上書き */
+body.dark-mode pre,
+body.dark-mode code {
+    color: #e0e0e0 !important;
+    background-color: #1e1e1e !important;
+    border-color: #333 !important;
+}
+
+/* リッチテキストエディタ等で黒文字がハードコードされた場合への対処 */
+body.dark-mode .no-overflow [style*="color: #000000"],
+body.dark-mode .no-overflow [style*="color: rgb(0, 0, 0)"],
+body.dark-mode .no-overflow [style*="color: black"],
+body.dark-mode .no-overflow [style*="color:#000000"],
+body.dark-mode .no-overflow [style*="color:#000"] {
+    color: #e0e0e0 !important;
+}
+
+/* アラート・通知領域（フォーラムの「まだトピックがありません」など） */
+body.dark-mode .alert-info {
+    background-color: #0c2a3e !important;
+    color: #92c5e5 !important;
+    border-color: #123d5a !important;
 }
 
 /* 読み込み中のスケルトンアニメーションの背景 */

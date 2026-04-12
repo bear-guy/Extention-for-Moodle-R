@@ -60,8 +60,13 @@ const initExtension = () => {
         if (link.dataset.processed === "true") return;
 
         link.title = text;
-        const newText = text.substring(6, 6 + 16);
-        link.innerText = text.length > 22 ? newText + '…' : newText;
+        
+        // 授業名が6文字以下の場合は削らずにそのまま表示し、見えなくなるのを防ぐ
+        if (text.length > 6) {
+          const newText = text.substring(6, 22);
+          link.innerText = text.length > 22 ? newText + '…' : newText;
+        }
+        
         link.dataset.processed = "true";
       });
     }
@@ -99,6 +104,8 @@ const initExtension = () => {
       
       if (targetLink && targetLink.nextElementSibling && targetLink.nextElementSibling.tagName === 'DIV') {
         targetLink = targetLink.nextElementSibling;
+      } else if (!targetLink && listItems.length > 0) {
+        targetLink = listItems[listItems.length - 1]; // Intelliboardが見つからない場合は最後に追加
       }
 
       if (targetLink) {
