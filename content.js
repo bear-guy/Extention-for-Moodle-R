@@ -10,6 +10,19 @@ chrome.storage.local.get({ isEnabled: true, isDarkMode: false }, (data) => {
 });
 
 const initExtension = () => {
+  // 拡張機能内の画像をCSSで参照するためのスタイルを動的に注入
+  if (!document.getElementById('moodle-ext-dynamic-style')) {
+    const iconUrl = chrome.runtime.getURL('icon/monologo1.svg');
+    const style = document.createElement('style');
+    style.id = 'moodle-ext-dynamic-style';
+    style.textContent = `
+      body.dark-mode img[src*="/monologo"] {
+        content: url("${iconUrl}") !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   const fixMoodleLayout = () => {
     // 1. ページ全体を広くするためにbodyのクラスをいじる
     document.body.classList.remove('limitedwidth');
@@ -55,8 +68,59 @@ const initExtension = () => {
     }
   };
 
+  // カスタムリンク（Student Portal / Campus Web）の追加
+  const addCustomLinks = () => {
+    const links = [
+      { name: 'Student Portal', url: 'https://sp.ritsumei.ac.jp/studentportal' },
+      { name: 'Campus Web', url: 'https://cw.ritsumei.ac.jp/campusweb/login.html' }
+    ];
+
+    // ヘッダーのナビゲーションメニューに追加（「Intelliboard」の後ろ）
+    const navbar = document.querySelector('ul.navbar-nav.more-nav');
+    if (navbar && !document.querySelector('.custom-nav-link')) {
+      const navItems = Array.from(navbar.querySelectorAll('li.nav-item'));
+      const targetItem = navItems.find(li => li.textContent.includes('Intelliboard')) || navItems[navItems.length - 1];
+
+      if (targetItem) {
+        links.slice().reverse().forEach(link => {
+          const li = document.createElement('li');
+          li.className = 'nav-item custom-nav-link';
+          li.setAttribute('role', 'none');
+          li.innerHTML = `<a role="menuitem" class="nav-link" href="${link.url}" target="_blank" tabindex="-1">${link.name}</a>`;
+          targetItem.after(li);
+        });
+      }
+    }
+
+    // 左サイドバー(ドロワー)のメニューに追加（「Intelliboard」の後ろ）
+    const drawerList = document.querySelector('.drawercontent .list-group');
+    if (drawerList && !document.querySelector('.custom-drawer-link')) {
+      const listItems = Array.from(drawerList.children);
+      let targetLink = listItems.find(el => el.textContent.includes('Intelliboard') && el.tagName === 'A');
+      
+      if (targetLink && targetLink.nextElementSibling && targetLink.nextElementSibling.tagName === 'DIV') {
+        targetLink = targetLink.nextElementSibling;
+      }
+
+      if (targetLink) {
+        links.slice().reverse().forEach(link => {
+          const a = document.createElement('a');
+          a.className = 'list-group-item list-group-item-action custom-drawer-link';
+          a.href = link.url;
+          a.target = '_blank';
+          a.textContent = link.name;
+          targetLink.after(a);
+        });
+      }
+    }
+  };
+
   // 監視設定（Moodleは後から要素が増えるので多めに監視）
-  const observer = new MutationObserver(fixMoodleLayout);
+  const observer = new MutationObserver(() => {
+    fixMoodleLayout();
+    addCustomLinks();
+  });
   observer.observe(document.body, { childList: true, subtree: true });
   fixMoodleLayout();
+  addCustomLinks();
 };
