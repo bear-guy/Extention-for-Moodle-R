@@ -308,3 +308,9 @@ body.moodle-ext-enabled.dark-mode .badge.bg-success {
     background-color: #34c759 !important;
     opacity: 1 !important;
 }
+
+/* 拡張機能（ベターレイアウト）が無効の時は追加リンクを非表示にする */
+body:not(.moodle-ext-enabled) .custom-nav-link,
+body:not(.moodle-ext-enabled) .custom-drawer-link {
+    display: none !important;
+}
