@@ -321,3 +321,20 @@ body.dark-mode .btn-outline-secondary {
     color: #e0e0e0 !important;
     border-color: #555 !important;
 }
+
+/* PDF等のファイルアイコンがダークモードの背景と同化するのを防ぐ */
+body.dark-mode img.icon[src*="/f/"] {
+    background-color: #e0e0e0 !important;
+    border-radius: 4px !important;
+    padding: 2px !important;
+}
+
+/* --- ホームスキップ機能用スタイル --- */
+/* ナビゲーションメニューのHomeボタンを非表示 */
+body.moodle-ext-skip-home li[data-key="home"] {
+    display: none !important;
+}
+/* ドロワー(左サイドバー)のHomeリンクを非表示 */
+body.moodle-ext-skip-home .drawercontent .list-group a.list-group-item[href="https://lms.ritsumei.ac.jp/"] {
+    display: none !important;
+}

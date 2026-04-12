@@ -1,5 +1,14 @@
 // 拡張機能が有効な場合のみ処理を実行する
-chrome.storage.local.get({ isEnabled: true, isDarkMode: false }, (data) => {
+chrome.storage.local.get({ isEnabled: true, isDarkMode: false, isSkipHomeEnabled: false }, (data) => {
+  // ホームスキップが有効な場合の処理
+  if (data.isSkipHomeEnabled) {
+    if (window.location.pathname === '/' || window.location.pathname === '/index.php') {
+      window.location.replace('https://lms.ritsumei.ac.jp/my/');
+      return; // リダイレクト処理に入るため以降の処理は実行しない
+    }
+    document.body.classList.add('moodle-ext-skip-home');
+  }
+
   if (data.isEnabled) {
     document.body.classList.add('moodle-ext-enabled');
     initExtension();
