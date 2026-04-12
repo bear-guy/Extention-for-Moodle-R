@@ -1,5 +1,7 @@
 // 拡張機能が有効な場合のみ処理を実行する
-chrome.storage.local.get({ isEnabled: true, isDarkMode: false, isSkipHomeEnabled: false, isStaffMode: false, isSyllabusEnabled: true }, (data) => {
+const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+chrome.storage.local.get({ isEnabled: true, isDarkMode: prefersDark, isSkipHomeEnabled: false, isStaffMode: false, isSyllabusEnabled: true }, (data) => {
   // ホームスキップが有効な場合の処理
   if (data.isSkipHomeEnabled && window.location.hostname.includes('lms.ritsumei.ac.jp')) {
     if (window.location.pathname === '/' || window.location.pathname === '/index.php') {
@@ -26,6 +28,17 @@ const initExtension = (isStaffMode, isSyllabusEnabled) => {
     style.textContent = `
       body.dark-mode img[src*="/monologo"] {
         filter: invert(1) brightness(1.5) !important;
+      }
+      
+      /* ダークモード時のシラバスボタンのスタイル */
+      body.dark-mode .custom-syllabus-link {
+        background-color: #2c2c2c !important;
+        color: #e0e0e0 !important;
+        border-color: #555 !important;
+      }
+      body.dark-mode .custom-syllabus-link:hover {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
       }
     `;
     document.head.appendChild(style);
@@ -366,13 +379,26 @@ const initExtension = (isStaffMode, isSyllabusEnabled) => {
       };
 
       const storageKey = `syllabus_${courseCode}`;
-      chrome.storage.local.set({ [storageKey]: syllabusData }, () => {
-        console.log(`[Extension-for-Moodle-R] シラバス情報を保存しました: ${courseCode}`, syllabusData);
-        document.body.dataset.syllabusExtracted = "true";
-        clearInterval(window.syllabusExtractInterval);
-        window.syllabusExtractInterval = null;
-        
-        alert(`【Extension for Moodle+R】\nシラバス情報（${courseCode}）を取得・保存しました！\nMoodleの授業ページに戻って更新してください。`);
+      
+      // すでに保存されているか確認する
+      chrome.storage.local.get([storageKey], (result) => {
+        if (result[storageKey]) {
+          // すでにデータがある場合は保存とアラートをスキップ
+          document.body.dataset.syllabusExtracted = "true";
+          clearInterval(window.syllabusExtractInterval);
+          window.syllabusExtractInterval = null;
+          return;
+        }
+
+        // 初めて取得した時だけ保存してアラートを出す
+        chrome.storage.local.set({ [storageKey]: syllabusData }, () => {
+          console.log(`[Extension-for-Moodle-R] シラバス情報を保存しました: ${courseCode}`, syllabusData);
+          document.body.dataset.syllabusExtracted = "true";
+          clearInterval(window.syllabusExtractInterval);
+          window.syllabusExtractInterval = null;
+          
+          alert(`【Extension for Moodle+R】\nシラバス情報（${courseCode}）を取得・保存しました。\nMoodleの授業ページに戻って更新してください。`);
+        });
       });
     }, 1000);
   };
@@ -412,6 +438,12 @@ const initExtension = (isStaffMode, isSyllabusEnabled) => {
       }
     }
 
+    // 長すぎるタイトルが右側の要素を押しつぶさないように、親要素の幅の縮小を許可する
+    const titleContainer = document.querySelector('.page-context-header');
+    if (titleContainer && titleContainer.parentElement) {
+      titleContainer.parentElement.style.minWidth = '0'; // 縮小を許可してタイトルの自然な改行を促す
+    }
+
     // 授業コードをタイトルから取得 (例: "54571" などの先頭5桁の数字)
     let courseCode = '';
     // Moodleのページによってクラス名が異なるため、複数を指定
@@ -431,6 +463,8 @@ const initExtension = (isStaffMode, isSyllabusEnabled) => {
       syllabusBtn.target = '_blank'; // Moodleからシラバスを開くときは新しいタブにする
       syllabusBtn.className = 'btn btn-secondary custom-syllabus-link';
       syllabusBtn.textContent = 'シラバス';
+      syllabusBtn.style.flexShrink = '0'; // ボタンが縮まないようにする
+      syllabusBtn.style.whiteSpace = 'nowrap'; // ボタン内の文字を改行させない
       headerContainer.prepend(syllabusBtn);
     }
 
@@ -463,6 +497,8 @@ const initExtension = (isStaffMode, isSyllabusEnabled) => {
             infoContainer.style.fontSize = '0.9rem';
             infoContainer.style.fontWeight = 'bold'; // 文字を太くして視認性アップ
             infoContainer.style.gap = '15px';
+            infoContainer.style.flexShrink = '0'; // 幅が狭くなってもコンテナを縮ませない
+            infoContainer.style.whiteSpace = 'nowrap'; // 取得した情報の文字を改行させない
             infoContainer.innerHTML = `
               <div><strong>開講曜日・時限:</strong> ${data.schedule}</div>
               <div><strong>担当教員:</strong> ${data.teacher}</div>

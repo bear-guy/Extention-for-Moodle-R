@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const staffModeToggle = document.getElementById('staffModeToggle');
   const syllabusToggle = document.getElementById('syllabusToggle');
   const staffModeWrapper = document.getElementById('staffModeWrapper');
+  const clearSyllabusDataBtn = document.getElementById('clearSyllabusDataBtn');
 
   // 教職員モードのUI状態を更新する関数
   const updateStaffModeUI = (isEnabled) => {
@@ -20,7 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // 保存されている状態を取得
-  chrome.storage.local.get({ isEnabled: true, isDarkMode: false, isSkipHomeEnabled: false, isStaffMode: false, isSyllabusEnabled: true }, (data) => {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  chrome.storage.local.get({ isEnabled: true, isDarkMode: prefersDark, isSkipHomeEnabled: false, isStaffMode: false, isSyllabusEnabled: true }, (data) => {
     toggle.checked = data.isEnabled;
     darkToggle.checked = data.isDarkMode;
     skipHomeToggle.checked = data.isSkipHomeEnabled;
@@ -81,6 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (syllabusToggle) {
     syllabusToggle.addEventListener('change', () => {
       chrome.storage.local.set({ isSyllabusEnabled: syllabusToggle.checked }, reloadTabs);
+    });
+  }
+
+  // シラバスデータの削除ボタン
+  if (clearSyllabusDataBtn) {
+    clearSyllabusDataBtn.addEventListener('click', () => {
+      if (confirm('取得・保存したシラバスのデータをすべて削除しますか？\n※Moodle上の表示が消え、再度シラバスを開くまで表示されなくなります。')) {
+        chrome.storage.local.get(null, (items) => {
+          const keysToRemove = Object.keys(items).filter(key => key.startsWith('syllabus_'));
+          if (keysToRemove.length > 0) {
+            chrome.storage.local.remove(keysToRemove, () => {
+              alert('シラバスデータを削除しました。');
+              reloadTabs();
+            });
+          } else {
+            alert('削除するデータがありません。');
+          }
+        });
+      }
     });
   }
 });

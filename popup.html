@@ -67,6 +67,15 @@
       color: #999;
     }
     
+    .clear-data-link {
+      font-size: 11px;
+      color: #888;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .clear-data-link:hover { color: #d32f2f; }
+    
     /* --- ダークモード用スタイル --- */
     html.dark-mode,
     body.dark-mode {
@@ -82,6 +91,8 @@
     body.dark-mode .divider { color: #555; }
     body.dark-mode .credit-text { color: #777; }
     body.dark-mode .header-icon { filter: brightness(0.9); }
+    body.dark-mode .clear-data-link { color: #aaa; }
+    body.dark-mode .clear-data-link:hover { color: #ef5350; }
   </style>
 </head>
 <body>
@@ -110,12 +121,17 @@
       <span class="slider"></span>
     </label>
   </div>
-  <div class="toggle-wrapper" style="margin-top: 10px;">
-    <span class="toggle-label">シラバス情報の自動取得</span>
-    <label class="switch">
-      <input type="checkbox" id="syllabusToggle" checked>
-      <span class="slider"></span>
-    </label>
+  <div style="margin-top: 10px;">
+    <div class="toggle-wrapper">
+      <span class="toggle-label">シラバス情報の自動取得</span>
+      <label class="switch">
+        <input type="checkbox" id="syllabusToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div style="text-align: right; margin-top: 4px;">
+      <span id="clearSyllabusDataBtn" class="clear-data-link">取得したデータを削除</span>
+    </div>
   </div>
   <div class="toggle-wrapper" style="margin-top: 10px;">
     <span class="toggle-label">ダークモード（ベータ）</span>
