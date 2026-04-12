@@ -12,12 +12,11 @@ chrome.storage.local.get({ isEnabled: true, isDarkMode: false }, (data) => {
 const initExtension = () => {
   // 拡張機能内の画像をCSSで参照するためのスタイルを動的に注入
   if (!document.getElementById('moodle-ext-dynamic-style')) {
-    const iconUrl = chrome.runtime.getURL('icon/monologo1.svg');
     const style = document.createElement('style');
     style.id = 'moodle-ext-dynamic-style';
     style.textContent = `
       body.dark-mode img[src*="/monologo"] {
-        content: url("${iconUrl}") !important;
+        filter: invert(1) brightness(1.5) !important;
       }
     `;
     document.head.appendChild(style);
