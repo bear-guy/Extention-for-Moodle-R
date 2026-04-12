@@ -14,7 +14,8 @@
 "tabs"
 ],
 "host_permissions": [
-"*://lms.ritsumei.ac.jp/*"
+"*://lms.ritsumei.ac.jp/*",
+"*://syllabus.ritsumei.ac.jp/*"
 ],
 "action": {
 "default_popup": "popup.html",
@@ -30,7 +31,10 @@
 },
 "content_scripts": [
 {
-"matches": ["https://lms.ritsumei.ac.jp/*"],
+"matches": [
+  "https://lms.ritsumei.ac.jp/*",
+  "https://syllabus.ritsumei.ac.jp/*"
+],
 "css": ["content.css"],
 "js": ["content.js"]
 }
